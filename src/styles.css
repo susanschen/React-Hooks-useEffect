@@ -3,6 +3,7 @@
   text-align: center;
   display: grid;
   grid-template-rows: 150px 1fr 50px;
+  align-items: center;
   height: 100vh;
 }
 
