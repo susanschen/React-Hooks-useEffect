@@ -1,4 +1,11 @@
 .App {
   font-family: sans-serif;
   text-align: center;
+  display: grid;
+  grid-template-rows: 150px 1fr 50px;
+  height: 100vh;
+}
+
+body {
+  color: #262626;
 }
