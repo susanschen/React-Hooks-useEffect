@@ -5,34 +5,42 @@ import "./styles.css";
 
 function App() {
   const [count, setCount] = useState(0); // initialize count to 0
-  const [count2, setCount2] = useState(100); // initialize count2 to 100;
+  const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
 
-  // useEffect is similar to componentDidMount and componentDidUpdate
-  // useEffect gets called after the component did mount/update
-  useEffect(() => {
-    // Update the document title using the browser API
-    // Note: document.title does not work on codesandbox
-    console.info('did Mount');
-    document.title = `You clicked $(count) times`;
-    console.info(document.title);
-  }, []); 
-  /*  
-  By passing an empty array as a second argument, useEffect is acting like componentDidMount only
-   - it will initial state to 0 and render initial state.
-  "componentDidUpdate" will not get called for each new render update
-  */
+  /*
+  useEffect(fn) is similar to componentDidMount AND componentDidUpdate
+  - it runs after a component did mount/update
+  - You can have multiple useEffect, each one doing something different.
 
-  // You can have multiple useEffect, each one doing something different.
+  To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
+  i.e. useEffect(fn, [])
+   */
   useEffect(() => {
-    console.log("count2: ", count2);
-  }, [count2]); 
+    console.info("Component did mount");
+  }, []);
+
   /*   
-  When you have a lot of states, useEffect will always run whenever a state changes.
-  To avoid unnessary calls to useEffect, pass in a state as the value of array so useEffect
-  will render only when that state changes.
-  i.e. pass [count2] so this useEffect funtion does not run when 'count' updates
-  */
+  When there are multiple states, useEffect(fn) will always run when any state did update.
 
+  To avoid unnessary calls to useEffect, pass in an array with the state you want to monitor. 
+  i.e. useEffect(fn) runs when either 'count' or 'userInput' did update
+  i.e. useEffect(fn, [count]) does not run when 'userInput' did update
+  */
+  useEffect(() => {
+    console.log("userInput: ", userInput);
+    /* 
+      Note useEffect is not updating the state here.
+      Putting setStates() here can lead to infinite loops (because each update triggers another call)
+      Infinite loops can be avoided by passing in the states to monitor.
+
+      The state update is done by setUserInput() inside updateUserInput()
+    */
+  },[userInput]);
+
+
+  const updateUserInput = e => {
+    setUserInput(e.target.value);
+  };
 
   return (
     <div className="App">
@@ -44,22 +52,36 @@ function App() {
       <div className="content">
         <div>
           <p>You clicked {count} times</p>
-          <button className="btn btn-primary" onClick={() => setCount(count + 1)}>          
+          <button
+            className="btn btn-primary"
+            onClick={() => setCount(count + 1)}
+          >
             Click me
           </button>
         </div>
-        <div>
-          <p>You clicked {count2} times!</p>
-          <button className="btn btn-primary" onClick={() => setCount2(count2 + 1)}>          
-            Click me!
-          </button>
-        </div>
+        <form>
+          <div className="form-group col-md-6">
+            <label htmlFor="user-input">You typed:{userInput}</label>
+            <input
+              type="text"
+              id="user-input"
+              className="form-control"
+              value={userInput}
+              onChange={updateUserInput}
+              placeholder="Write some text here"
+            />
+          </div>
+        </form>
       </div>
 
       <footer className="footer">
-        <p> Tutorials from
-          <a href="https://www.youtube.com/watch?v=k0WnY0Hqe5c"> Ben Awad,</a>
-          <a href="https://www.youtube.com/watch?v=K4xfCIRuf54"> codedamn</a></p>   
+        <p>
+          {" "}
+          Tutorials from
+          <a href="https://www.youtube.com/watch?v=k0WnY0Hqe5c"> Ben Awad</a>,
+          <a href="https://www.youtube.com/watch?v=K4xfCIRuf54"> codedamn</a>,
+          <a href="https://www.youtube.com/watch?v=i4KuAuZjRO8"> Weibenfalk</a>
+        </p>
       </footer>
     </div>
   );
