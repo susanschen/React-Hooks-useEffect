@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
+import { useForm } from "./useForm";
 
 import "./styles.css";
 
@@ -14,7 +15,7 @@ const useFetch = (url)=> {
    */
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch(url);
+      const response = await fetch(url)
       const data = await response.json();
       const [item] = data.results;
       setData(item);
@@ -22,7 +23,6 @@ const useFetch = (url)=> {
     }
     fetchData();
   },[url]);
-
   return {data,loading};
 }
 
@@ -30,6 +30,9 @@ function App() {
   const [count, setCount] = useState(0); // initialize count to 0
   const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
   const {data, loading} = useFetch("https://api.randomuser.me/");
+
+  const [values, handleChange] = useForm({email: "", password: ""});
+
   /*
   useEffect(fn) is similar to componentDidMount AND componentDidUpdate
   - it runs after a component did mount/update
@@ -42,10 +45,8 @@ function App() {
   */
   useEffect(() => {
     console.log("userInput: ", userInput);
-    /* 
-      Note useEffect is not updating the state here.
-      (The state update is done by setUserInput() inside the updateUserInput function)
-
+     /* 
+      Note useEffect is not updating any state here.      
       Putting setStates() here can lead to infinite loops because each update triggers another call,
       unless it is passed:
         - an empty array to act like componentDidMount, so it runs only once.
@@ -87,6 +88,24 @@ function App() {
               placeholder="Write some text here"
             />
           </div>
+
+          <div className="form-group">
+            <label htmlFor="email">E-mail address: </label>
+            <input 
+              name="email"
+              className="form-control"
+              value={values.email}
+              onChange={handleChange}
+            />
+            <label htmlFor="password">Password: </label>
+            <input  
+              type="password"
+              name="password"
+              className="form-control"
+              onChange={handleChange}
+              value={values.password}
+            />
+          </div>
         </form>
 
         <div>
@@ -102,13 +121,16 @@ function App() {
             </>
           }
         </div>
+
       </div>
+
+
 
       <footer className="footer">
         <p>
-          {" "}
-          Tutorials from
+          YouTube Tutorials from
           <a href="https://www.youtube.com/watch?v=k0WnY0Hqe5c"> Ben Awad</a>,
+          <a href="https://www.youtube.com/watch?v=j1ZRyw7OtZs"> Ben Awad</a>,
           <a href="https://www.youtube.com/watch?v=K4xfCIRuf54"> codedamn</a>,
           <a href="https://www.youtube.com/watch?v=i4KuAuZjRO8"> Weibenfalk</a>
         </p>
