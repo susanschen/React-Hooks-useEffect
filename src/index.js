@@ -3,37 +3,42 @@ import ReactDOM from "react-dom";
 
 import "./styles.css";
 
-function App() {
-  const [count, setCount] = useState(0); // initialize count to 0
-  const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
-  const [person, setPerson] = useState(null);
-
+const useFetch = (url)=> {
+  // const [person, setPerson] = useState(null);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
   /*
-  useEffect(fn) is similar to componentDidMount AND componentDidUpdate
-  - it runs after a component did mount/update
-  - You can have multiple useEffect, each one doing something different.
-
   To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
   i.e. useEffect(fn, [])
   componentDidMount is often used to fetch data from an API
    */
   useEffect(() => {
-    console.log('Component did mount.');
     async function fetchData() {
-      const response = await fetch('https://api.randomuser.me/');
+      const response = await fetch(url);
       const data = await response.json();
-      const [person] = data.results;
-      setPerson(person);
+      const [item] = data.results;
+      setData(item);
+      setLoading(false);
     }
     fetchData();
-  },[]);
+  },[url]);
 
-  /*   
+  return {data,loading};
+}
+
+function App() {
+  const [count, setCount] = useState(0); // initialize count to 0
+  const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
+  const {data, loading} = useFetch("https://api.randomuser.me/");
+  /*
+  useEffect(fn) is similar to componentDidMount AND componentDidUpdate
+  - it runs after a component did mount/update
+  - You can have multiple useEffect, each one doing something different.
+
   When there are multiple states, useEffect(fn) will always run when any state did update.
-
   To avoid unnessary calls to useEffect, pass in an array with the state you want to monitor. 
   i.e. useEffect(fn) runs when either 'count', 'person' or 'userInput' did update
-  i.e. useEffect(fn, [count]) does not run when 'userInput' did update
+  i.e. useEffect(fn, [count]) runs only when 'count' did update
   */
   useEffect(() => {
     console.log("userInput: ", userInput);
@@ -86,11 +91,14 @@ function App() {
 
         <div>
           <p>Fetched random person from API:</p>
-          {person && 
+          {/* {data &&  */}
+          {loading ? 
+            <>...loading</>
+            :
             <>
-              <p>{person.name.first} {person.name.last} from {person.location.city}
+              <p>{data.name.first} {data.name.last} from {data.location.city}
               </p>
-              <img src={person.picture.medium} alt="a random person"/>
+              <img src={data.picture.medium} alt="a random person"/>
             </>
           }
         </div>
