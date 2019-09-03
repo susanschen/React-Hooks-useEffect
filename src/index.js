@@ -54,6 +54,18 @@ function App() {
     */
   },[userInput]);
 
+  /* Example of when to use clean-up function in useEffect */
+  useEffect(()=> {
+    const onMouseMove = e => {
+      console.log(e)
+    }
+    window.addEventListener('mousemove', onMouseMove);
+    
+    // Return a clean-up function
+    return () => {
+      window.removeEventListener("mosemove", onMouseMove);
+    }
+  },[])
 
   const updateUserInput = e => {
     setUserInput(e.target.value);
