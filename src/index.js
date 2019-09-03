@@ -1,36 +1,21 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useForm } from "./useForm";
+import { useFetch } from "./useFetch";
 
 import "./styles.css";
 
-const useFetch = (url)=> {
-  // const [person, setPerson] = useState(null);
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
   /*
   To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
   i.e. useEffect(fn, [])
   componentDidMount is often used to fetch data from an API
    */
-  useEffect(() => {
-    async function fetchData() {
-      const response = await fetch(url)
-      const data = await response.json();
-      const [item] = data.results;
-      setData(item);
-      setLoading(false);
-    }
-    fetchData();
-  },[url]);
-  return {data,loading};
-}
+
 
 function App() {
   const [count, setCount] = useState(0); // initialize count to 0
   const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
   const {data, loading} = useFetch("https://api.randomuser.me/");
-
   const [values, handleChange] = useForm({email: "", password: ""});
 
   /*
@@ -57,7 +42,7 @@ function App() {
   /* Example of when to use clean-up function in useEffect */
   useEffect(()=> {
     const onMouseMove = e => {
-      console.log(e)
+      // console.log(e)
     }
     window.addEventListener('mousemove', onMouseMove);
     
@@ -126,7 +111,7 @@ function App() {
           {loading ? 
             <>...loading</>
             :
-            <>
+            <>    
               <p>{data.name.first} {data.name.last} from {data.location.city}
               </p>
               <img src={data.picture.medium} alt="a random person"/>
