@@ -6,6 +6,7 @@ import "./styles.css";
 function App() {
   const [count, setCount] = useState(0); // initialize count to 0
   const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
+  const [person, setPerson] = useState(null);
 
   /*
   useEffect(fn) is similar to componentDidMount AND componentDidUpdate
@@ -14,26 +15,36 @@ function App() {
 
   To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
   i.e. useEffect(fn, [])
+  componentDidMount is often used to fetch data from an API
    */
   useEffect(() => {
-    console.info("Component did mount");
-  }, []);
+    console.log('Component did mount.');
+    async function fetchData() {
+      const response = await fetch('https://api.randomuser.me/');
+      const data = await response.json();
+      const [person] = data.results;
+      setPerson(person);
+    }
+    fetchData();
+  },[]);
 
   /*   
   When there are multiple states, useEffect(fn) will always run when any state did update.
 
   To avoid unnessary calls to useEffect, pass in an array with the state you want to monitor. 
-  i.e. useEffect(fn) runs when either 'count' or 'userInput' did update
+  i.e. useEffect(fn) runs when either 'count', 'person' or 'userInput' did update
   i.e. useEffect(fn, [count]) does not run when 'userInput' did update
   */
   useEffect(() => {
     console.log("userInput: ", userInput);
     /* 
       Note useEffect is not updating the state here.
-      Putting setStates() here can lead to infinite loops (because each update triggers another call)
-      Infinite loops can be avoided by passing in the states to monitor.
+      (The state update is done by setUserInput() inside the updateUserInput function)
 
-      The state update is done by setUserInput() inside updateUserInput()
+      Putting setStates() here can lead to infinite loops because each update triggers another call,
+      unless it is passed:
+        - an empty array to act like componentDidMount, so it runs only once.
+        - the states to monitor, so it only runs when those states did update.
     */
   },[userInput]);
 
@@ -45,8 +56,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>Fetching Data from an API</h1>
-        <h2 className="text-muted">With React Hooks useEffect</h2>
+        <h1>React Hooks: useEffect</h1>
       </header>
 
       <div className="content">
@@ -59,8 +69,9 @@ function App() {
             Click me
           </button>
         </div>
+
         <form>
-          <div className="form-group col-md-6">
+          <div className="form-group">
             <label htmlFor="user-input">You typed:{userInput}</label>
             <input
               type="text"
@@ -72,6 +83,17 @@ function App() {
             />
           </div>
         </form>
+
+        <div>
+          <p>Fetched random person from API:</p>
+          {person && 
+            <>
+              <p>{person.name.first} {person.name.last} from {person.location.city}
+              </p>
+              <img src={person.picture.medium} alt="a random person"/>
+            </>
+          }
+        </div>
       </div>
 
       <footer className="footer">
