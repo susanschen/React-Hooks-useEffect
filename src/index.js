@@ -13,7 +13,20 @@ import "./styles.css";
 
 
 function App() {
-  const [count, setCount] = useState(0); // initialize count to 0
+  /*
+  Initialize count to value in localStorage
+  To avoid calling JSON.parse() on every render, use initializer fn ()=>
+
+  Use localStorage.getItem(key) to retrieve the data value paired with the key
+  Use JSON.parse(string) to convert the retrieved string to a JSON object,
+   or it's orginal format: array, number, etc.
+
+  https://javascript.info/localstorage
+  */
+  const [count, setCount] = useState(()=> 
+    JSON.parse(localStorage.getItem("count"))
+  );
+
   const [userInput, setUserInput] = useState(""); // initialize userInput to empty string
   const {data, loading} = useFetch("https://api.randomuser.me/");
   const [values, handleChange] = useForm({email: "", password: ""});
@@ -52,6 +65,17 @@ function App() {
     }
   },[])
 
+  /* 
+  localStorage saves data in the user's browser,
+  so the data remains after page refreshes or browser closes.
+  - localStorage stores data in key and value pairs, both of which must be strings. 
+  - Use JSON.stringify(object) to convert values to a string
+  - Use localStorage.setItem(key, value) to save
+  */
+  useEffect(()=> {
+    localStorage.setItem("count", JSON.stringify(count));
+  },[count]); // need to pass [count] 
+
   const updateUserInput = e => {
     setUserInput(e.target.value);
   };
@@ -64,7 +88,7 @@ function App() {
 
       <div className="content">
         <div>
-          <p>You clicked {count} times</p>
+          <p>You clicked {count === null ? "0" : count}  times</p>
           <button
             className="btn btn-primary"
             onClick={() => setCount(count + 1)}
