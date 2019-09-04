@@ -54,14 +54,11 @@ function App() {
 
   /* Example of when to use clean-up function in useEffect */
   useEffect(()=> {
-    const onMouseMove = e => {
-      // console.log(e)
-    }
-    window.addEventListener('mousemove', onMouseMove);
-    
+    const onClicked = e => console.log(e)
+    window.addEventListener('click', onClicked);    
     // Return a clean-up function
     return () => {
-      window.removeEventListener("mosemove", onMouseMove);
+      window.removeEventListener("click", onClicked);
     }
   },[])
 
