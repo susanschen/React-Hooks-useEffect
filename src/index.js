@@ -5,12 +5,18 @@ import { useFetch } from "./useFetch";
 
 import "./styles.css";
 
-  /*
-  To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
-  i.e. useEffect(fn, [])
-  componentDidMount is often used to fetch data from an API
-   */
+/* 
+Hooks Rules
+1. Call Hooks from React function components. Do not call from regular JS fn
+2. Don't call Hooks inside loops, conditions or nested fn.
+    - If you like to check for a condtion, put it inside the Hook.
+      - NO:  if (condition) {useEffect()....}
+      - YES: useEffect() { if (condition) ....}
 
+To have useEffect act like componentDidMount ONLY, pass in an empty array for the second argument.
+i.e. useEffect(fn, [])
+componentDidMount is often used to fetch data from an API
+*/
 
 function App() {
   /*
@@ -41,7 +47,8 @@ function App() {
   i.e. useEffect(fn) runs when either 'count', 'person' or 'userInput' did update
   i.e. useEffect(fn, [count]) runs only when 'count' did update
   */
-  useEffect(() => {
+  // Instead of using arrow fn, name your fn to quickly see what each useEffect does.
+  useEffect( function logUserInputToConsole() { 
     console.log("userInput: ", userInput);
      /* 
       Note useEffect is not updating any state here.      
